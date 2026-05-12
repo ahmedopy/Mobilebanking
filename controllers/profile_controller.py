@@ -24,7 +24,7 @@ def profile():
     user = user_model.get_user_by_id(user_id)
     if not user:
         return "User not found", 404
-    return render_template('profile.html', user=user)
+    return render_template('profile.html', profile=user, user=user)
 
 
 @profile_bp.route('/editprofile', methods=['GET'])
