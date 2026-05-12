@@ -1,4 +1,4 @@
-Mobile Banking
+#Mobile Banking
 MobileBanking is a full-stack Flask-React mobile banking platform that integrates international currency conversion, business investment with monthly returns, bill splitting across multiple accounts, installment payments, micro-loans, loyalty points program and FAQ chatbot. Admin panel for transaction undo &amp; account suspension.
 
 - **Multi-Source Deposits** - Visa/Mastercard, banks, prepaid/gift cards
