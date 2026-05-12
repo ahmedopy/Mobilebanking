@@ -1,25 +1,20 @@
 import pymysql
-
-# ─────────────────────────────────────────────
-#  Single shared database connection (mirrors
-#  the original app.py connection setup)
-# ─────────────────────────────────────────────
+import os
 
 _db = None
 
 def get_db():
-    """Return the shared database connection (lazy-init)."""
     global _db
     if _db is None:
         _db = pymysql.connect(
-            host="localhost",
-            user="root",
-            password=" 2222 ",         
-            database="mobilebanking",
+            host=os.environ.get("MYSQLHOST"),
+            port=int(os.environ.get("MYSQLPORT", 3306)),
+            user=os.environ.get("MYSQLUSER"),
+            password=os.environ.get("MYSQLPASSWORD"),
+            database=os.environ.get("MYSQLDATABASE"),
             cursorclass=pymysql.cursors.DictCursor
         )
     return _db
 
 def get_db_connection():
-    """Alias used throughout the original codebase."""
     return get_db()
