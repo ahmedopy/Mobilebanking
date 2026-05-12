@@ -24,7 +24,20 @@ def profile():
     user = user_model.get_user_by_id(user_id)
     if not user:
         return "User not found", 404
-    return render_template('profile.html', profile=user, user=user)
+    profile_data = {
+        'username': f"{user['first_name']} {user['last_name']}",
+        'name': f"{user['first_name']} {user['last_name']}",
+        'phone': user['phone_number'],
+        'balance': float(user['balance']),
+        'firstName': user['first_name'],
+        'lastName': user['last_name'],
+        'dob': str(user['dob']) if user['dob'] else '',
+        'email': user['email'],
+        'nid': user['nid'],
+        'loyaltyPoints': user.get('points', 0),
+        'profilePic': user.get('profile_pic', 'default-profile-pic.jpg'),
+    }
+    return render_template('profile.html', profile=profile_data)
 
 
 @profile_bp.route('/editprofile', methods=['GET'])
