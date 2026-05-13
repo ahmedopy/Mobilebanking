@@ -28,7 +28,7 @@ from controllers.favourite_controller   import favourite_bp
 
 # ── App factory ───────────────────────────────────────────────────────────────
 
-app = Flask(__name__, template_folder='views/templates', static_folder='views/static')
+app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
 
 # ── Register blueprints ───────────────────────────────────────────────────────
@@ -124,7 +124,31 @@ def scheduled_transactions():
 
 @app.route('/pending_installments')
 def pending_installments():
-    return render_template('pending_installments.html')
+    from controllers.auth_controller import get_user_id_from_cookie
+    from models.database import get_db
+    user_id = get_user_id_from_cookie()
+    if not user_id:
+        return redirect('/login')
+    db = get_db()
+    installments = []
+    try:
+        with db.cursor() as cursor:
+            # gas installments
+            cursor.execute("""SELECT name, meter_no AS account, amount, month AS issue_date, due_1 AS due_date, 'Gas Bill' AS service
+                FROM pay_gas WHERE user_id=%s AND status='pending'""", (user_id,))
+            installments += cursor.fetchall()
+            # wifi installments
+            cursor.execute("""SELECT name, wifi_id AS account, amount, month AS issue_date, due_1 AS due_date, 'WiFi Bill' AS service
+                FROM pay_wifi WHERE user_id=%s AND status='pending'""", (user_id,))
+            installments += cursor.fetchall()
+            # electricity installments
+            cursor.execute("""SELECT name, meter_no AS account, amount, month AS issue_date, due_1 AS due_date, 'Electricity Bill' AS service
+                FROM pay_electricity WHERE user_id=%s AND status='pending'""", (user_id,))
+            installments += cursor.fetchall()
+    except Exception:
+        pass
+    # template: for entry in installments — entry.service, entry.amount, entry.issue_date, entry.due_date
+    return render_template('pending_installments.html', installments=installments)
 
 @app.route('/account_suspended')
 def account_suspended():

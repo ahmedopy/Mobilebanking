@@ -142,7 +142,7 @@ def admin_signup():
             cursor.execute(
                 """INSERT INTO admin_profile
                    (first_name, last_name, phone_number, password, email, status)
-                   VALUES (%s, %s, %s, %s, %s, 'pending')""",
+                   VALUES (%s, %s, %s, %s, %s, 'unauthorized')""",
                 (first_name, last_name, phone, hashed, email)
             )
         db.commit()
